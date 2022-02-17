@@ -7,3 +7,6 @@
 
 ## Make docker update the containers after changing Dockerfile
 - Run `docker-compose up --build`
+
+## Run backend in docker
+- `docker-compose exec backend sh`

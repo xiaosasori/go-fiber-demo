@@ -18,4 +18,10 @@ func Setup(app *fiber.App) {
 	apiAuthenticated.Get("user", controllers.User)
 	apiAuthenticated.Put("users/info", controllers.UpdateInfo)
 	apiAuthenticated.Put("users/password", controllers.UpdatePassword)
+	apiAuthenticated.Get("ambassadors", controllers.Ambassadors)
+	apiAuthenticated.Get("products", controllers.Products)
+	apiAuthenticated.Post("products", controllers.CreateProducts)
+	apiAuthenticated.Post("products/:id", controllers.GetProduct)
+	apiAuthenticated.Put("products/:id", controllers.UpdateProduct)
+	apiAuthenticated.Delete("products/:id", controllers.DeleteProduct)
 }
