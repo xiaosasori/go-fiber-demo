@@ -10,3 +10,7 @@
 
 ## Run backend in docker
 - `docker-compose exec backend sh`
+
+## gorm
+- `Preload("prop")` to preload associations
+- `gorm:"-"`: dont add this prop to the db
