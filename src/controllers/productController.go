@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"go-fiber-demo/src/database"
 	"go-fiber-demo/src/models"
+	"sort"
 	"strconv"
 	"strings"
 	"time"
@@ -130,6 +131,20 @@ func ProductsBackend(c *fiber.Ctx) error {
 		}
 	} else {
 		searchedProducts = products
+	}
+
+	// sort products
+	if sortParam := c.Query("sort"); sortParam != "" {
+		sortLower := strings.ToLower(sortParam)
+		if sortLower == "asc" {
+			sort.Slice(searchedProducts, func(i, j int) bool {
+				return searchedProducts[i].Price < searchedProducts[j].Price
+			})
+		} else if sortLower == "desc" {
+			sort.Slice(searchedProducts, func(i, j int) bool {
+				return searchedProducts[i].Price > searchedProducts[j].Price
+			})
+		}
 	}
 
 	return c.JSON(searchedProducts)
