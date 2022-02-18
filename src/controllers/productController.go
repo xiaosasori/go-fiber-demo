@@ -30,6 +30,8 @@ func CreateProducts(c *fiber.Ctx) error {
 
 	database.DB.Create(&product)
 
+	go database.ClearCache("products_frontend", "products_backend")
+
 	return c.JSON(product)
 }
 
@@ -56,6 +58,8 @@ func UpdateProduct(c *fiber.Ctx) error {
 
 	database.DB.Model(&product).Updates(&product)
 
+	go database.ClearCache("products_frontend", "products_backend")
+
 	return c.JSON(product)
 }
 
@@ -66,6 +70,8 @@ func DeleteProduct(c *fiber.Ctx) error {
 	product.Id = id
 
 	database.DB.Delete(&product)
+
+	go database.ClearCache("products_frontend", "products_backend")
 
 	return nil
 }
@@ -147,6 +153,7 @@ func ProductsBackend(c *fiber.Ctx) error {
 		}
 	}
 
+	// pagination
 	var total = len(searchedProducts)
 	page, _ := strconv.Atoi(c.Query("page", "1"))
 	perPage := 9
