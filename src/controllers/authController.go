@@ -4,10 +4,9 @@ import (
 	"go-fiber-demo/src/database"
 	"go-fiber-demo/src/middlewares"
 	"go-fiber-demo/src/models"
-	"strconv"
+	"strings"
 	"time"
 
-	"github.com/dgrijalva/jwt-go/v4"
 	"github.com/gofiber/fiber/v2"
 )
 
@@ -29,7 +28,7 @@ func Register(c *fiber.Ctx) error {
 		FirstName:    data["first_name"],
 		LastName:     data["last_name"],
 		Email:        data["email"],
-		IsAmbassador: false,
+		IsAmbassador: strings.Contains(c.Path(), "/api/ambassador"),
 	}
 	user.SetPassword(data["password"])
 
@@ -63,13 +62,17 @@ func Login(c *fiber.Ctx) error {
 		})
 	}
 
-	// generate token
-	payload := jwt.StandardClaims{
-		Subject:   strconv.Itoa(user.Id),
-		ExpiresAt: jwt.NewTime(30 * 60),
+	isAmbassador := strings.Contains(c.Path(), "/api/ambassador")
+
+	var scope string
+
+	if isAmbassador {
+		scope = "ambassador"
+	} else {
+		scope = "admin"
 	}
 
-	token, err := jwt.NewWithClaims(jwt.SigningMethodHS256, payload).SignedString([]byte("secret"))
+	token, err := middlewares.GenerateJWT(user.Id, scope)
 	if err != nil {
 		c.Status(fiber.StatusBadRequest)
 		return c.JSON(fiber.Map{
